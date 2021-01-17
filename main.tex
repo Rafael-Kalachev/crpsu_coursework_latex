@@ -1,0 +1,41 @@
+\documentclass[12pt]{article}
+
+\usepackage{xargs}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2cm]{geometry}
+\usepackage[T2A]{fontenc}
+\usepackage{csquotes}
+\usepackage{tabulary}
+\usepackage{graphicx}
+\usepackage[capitalize]{cleveref}
+\usepackage[style=apa,block=ragged]{biblatex}
+\usepackage[english]{babel}
+\usepackage{verbatim}
+
+\setlength{\parskip}{0.5em}
+
+\title{Disk2DiskBackup Design}
+\author{Rafael Kalachev}
+
+
+\newcommand\inputfile[1]{%
+    \InputIfFileExists{#1}{}{\typeout{No file #1.}}%
+}
+
+\newcommand\includegraphicsifexists[2][width=\linewidth]{\IfFileExists{#2}{\includegraphics[#1]{#2}}{ \typeout{No file #2.}}}
+
+\begin{document}
+\inputfile{test1.m}
+
+
+\inputfile{test1.res}
+
+\inputfile{test2.m}
+
+\includegraphics{test1}
+
+\includegraphics{test}
+
+\includegraphics{logo}
+
+\end{document}
