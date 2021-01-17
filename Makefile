@@ -4,6 +4,8 @@ PROJECT_FILE:=$(PROJECT)
 EXPORT_DIR:=export
 SOURCE_DIR:=src
 
+CONF=rafi
+
 LATEXMK:=latexmk
 LATEXMK_PDF_ARGS:= -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make -quiet 
 LATEXMK_CLEAN_ARGS:= -CA
@@ -29,13 +31,15 @@ PDF_READER:=mupdf
 
 #################################################################
 
-all: $(PROJECT_FILE) exp
+all: src/conf.m $(PROJECT_FILE) exp 
 	
 $(PROJECT_FILE): main.pdf
 	cp $^ $@
 
 main.pdf: main.tex $(ALL_FILES)
 	$(LATEXMK) $(LATEXMK_PDF_ARGS) $^ 
+
+src/conf.m: $(CONF)_conf.m
 
 ##########################################################
 
