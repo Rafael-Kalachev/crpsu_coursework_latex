@@ -1,10 +1,11 @@
-PROJECT:=crpsu_coursework_rafael.pdf 
+
+CONF:=rafi
+PROJECT:=crpsu_coursework$(CONF).pdf 
 PROJECT_FILE:=$(PROJECT)
 
 EXPORT_DIR:=export
 SOURCE_DIR:=src
 
-CONF:=rafi
 
 LATEXMK:=latexmk
 LATEXMK_PDF_ARGS:= -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make -quiet 
@@ -12,11 +13,11 @@ LATEXMK_CLEAN_ARGS:= -CA
 
 
 MATLAB_SCRIPTS_LIST:= $(wildcard $(SOURCE_DIR)/*.m)
-MATLAB_RUN_SCRIPT:=octave-cli
-MATLAB_RUN_SCRIPT_ARGS:= --path $(SOURCE_DIR)
-
-MATLAB_EXPORT_FIGURE:=octave-cli
-MATLAB_EXPORT_FIGURE_ARGS:= -path $(SOURCE_DIR)
+MATLAB_RUN_SCRIPT:=/usr/local/Polyspace/R2020b/bin/matlab
+MATLAB_RUN_SCRIPT_ARGS:= -sd src -r
+MATLAB_REDIRECT= -logfile
+MATLAB_EXPORT_FIGURE:=/usr/local/Polyspace/R2020b/bin/matlab
+MATLAB_EXPORT_FIGURE_ARGS:= -sd src -r 
 
 
 M_FILES:= $(wildcard *.m)
@@ -31,7 +32,7 @@ PDF_READER:=mupdf
 
 #################################################################
 
-all:  $(PROJECT_FILE) exp 
+all:  gen_fig.stat $(PROJECT_FILE) exp 
 	
 $(PROJECT_FILE): main.pdf
 	cp $^ $@
@@ -45,10 +46,13 @@ main.pdf: main.tex $(ALL_FILES)
 	$(DIA) $(DIA_ARGS) --export=$@ $^
 
 %.res: src/%.m
-	$(MATLAB_RUN_SCRIPT) $(MATLAB_RUN_SCRIPT_ARGS) $^ > $@
+	$(MATLAB_RUN_SCRIPT) $(MATLAB_RUN_SCRIPT_ARGS) $(basename $^) $(MATLAB_REDIRECT) $@
+
+%_fig.png: gen_fig.stat
+	cp $(SOURCE_DIR)/$@ $@
 
 %.res: src/%.res
-	cp $^ $@
+	sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" $^ > $@
 
 %.png: src/%.svg
 	inkscape -z $^ -e $@
@@ -68,8 +72,6 @@ main.pdf: main.tex $(ALL_FILES)
 %.m: $(SOURCE_DIR)/%.m
 	cp $^ $@
 
-%_fig.png: gen_fig.stat
-	cp $(SOURCE_DIR)/$@ $@
 
 #####################################################
 
@@ -84,7 +86,7 @@ show: $(PROJECT_FILE)
 exp: $(PROJECT_FILE)
 	cp $(PROJECT_FILE) $(EXPORT_DIR)
 
-gen_fig.stat: $(MATLAB_SCRIPTS_LIST)
-	grep -l figure $^ #| xargs -I {} $(MATLAB_EXPORT_FIGURE) $(MATLAB_EXPORT_FIGURE_ARGS) {}; touch $@
+gen_fig.stat: src/lab1.m src/lab2.m
+	echo lab1 lab2 | xargs -d ' ' -I {} $(MATLAB_EXPORT_FIGURE) $(MATLAB_EXPORT_FIGURE_ARGS) 'run {}.m;quit' $(MATLAB_REDIRECT) src/{}.res ; touch $@
 
-.PHONY:clean show expi test
+.PHONY:clean show exp test
