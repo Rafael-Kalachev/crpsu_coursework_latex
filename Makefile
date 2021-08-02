@@ -8,7 +8,7 @@ SOURCE_DIR:=src
 
 
 LATEXMK:=latexmk
-LATEXMK_PDF_ARGS:= -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make -quiet 
+LATEXMK_PDF_ARGS:= -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make -quiet -deps -deps-out=deps.file 
 LATEXMK_CLEAN_ARGS:= -CA
 
 
